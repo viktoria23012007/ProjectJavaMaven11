@@ -8,9 +8,7 @@ import ru.netology.domain.Player;
 import ru.netology.exception.AlreadyRegisteredException;
 import ru.netology.exception.NotRegisteredException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,24 +18,25 @@ public class GameTest {
     private final Player player3 = new Player(3, "Player 3", 3);
     private final Player newPlayer = new Player(4, "Player 4", 2);
     private final Player newPlayerWithSameId = new Player(1, "Player 5", 1);
-    private final Collection<Player> players = new ArrayList<>(List.of(player1, player2, player3));
+    private final Map<String, Player> map = Map.of(player1.getName(), player1, player2.getName(), player2, player3.getName(), player3);
+    private final HashMap<String, Player> players = new HashMap<>(map);
     private final Game game = new Game(players);
 
     @Test
     public void getAll() {
-        assertTrue(game.getAll().containsAll(players));
+        assertTrue(game.getAll().equals(players));
     }
 
     @Test
     public void shouldFindByName() {
         Player expected = player1;
-        Player actual = game.findBy("player 1");
+        Player actual = game.findBy("Player 1");
         assertEquals(expected, actual);
     }
 
     @Test
     public void shouldNotFindByName() {
-        assertNull(game.findBy("player"));
+        assertNull(game.findBy("Player"));
     }
 
     @Test
@@ -55,7 +54,7 @@ public class GameTest {
     @Test
     public void shouldRegister() {
         game.register(newPlayer);
-        assertTrue(game.getAll().contains(newPlayer));
+        assertTrue(game.getAll().containsValue(newPlayer));
     }
 
     @Test
@@ -70,27 +69,28 @@ public class GameTest {
 
     @Test
     public void shouldTrowNotRegisteredExceptionIfFirstPlayerIsNotRegistered() {
-        game.removeAll(List.of(player1));
+        game.getAll().remove("Player 1");
         Assertions.assertThrows(NotRegisteredException.class, () -> game.round("Player 1", "Player 2"));
     }
 
     @Test
     public void shouldTrowNotRegisteredExceptionIfSecondPlayerIsNotRegistered() {
-        game.removeAll(List.of(player2));
+        game.getAll().remove("Player 2");
         Assertions.assertThrows(NotRegisteredException.class, () -> game.round("Player 1", "Player 2"));
     }
 
     @Test
     public void shouldTrowNotRegisteredExceptionIfBothPlayersAreNotRegistered() {
-        game.removeAll(List.of(player1, player2));
+        game.getAll().remove("Player 1");
+        game.getAll().remove("Player 2");
         Assertions.assertThrows(NotRegisteredException.class, () -> game.round("Player 1", "Player 2"));
     }
 
     @ParameterizedTest
     @CsvSource({
-            "First Player Wins, player 2, player 1, 1",
-            "Second Player Wins, player 2, player 3, 2",
-            "Draw, player 2, player 4, 0",
+            "First Player Wins, Player 2, Player 1, 1",
+            "Second Player Wins, Player 2, Player 3, 2",
+            "Draw, Player 2, Player 4, 0",
     })
     public void shouldRound(String testName, String playerName1, String playerName2, int expected) {
         game.register(newPlayer);

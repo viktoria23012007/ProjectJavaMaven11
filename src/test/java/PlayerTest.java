@@ -10,19 +10,6 @@ public class PlayerTest {
 
     @ParameterizedTest
     @CsvSource({
-            "Camel case, Name Surname, true",
-            "Lower case, name surname, true",
-            "Only Name, Name, false",
-            "Another Player, Someone Else, false",
-            "Empty String,, false"
-    })
-    public void shouldMatchesPlayers(String test, String name, boolean expected) {
-        boolean actual = player.matches(name);
-        assertEquals(actual, expected);
-    }
-
-    @ParameterizedTest
-    @CsvSource({
             "Lower Strength, 4, 1",
             "Higher Strength, 6, -1",
             "Equal Strength, 5, 0"
