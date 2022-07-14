@@ -1,40 +1,30 @@
 package ru.netology.manager;
 
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.netology.domain.Player;
 import ru.netology.exception.AlreadyRegisteredException;
 import ru.netology.exception.NotRegisteredException;
 
-import java.util.Collection;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class Game {
-    private Collection<Player> players = new ArrayList<>();
+    private HashMap<String, Player> players = new HashMap<>();
 
-    public Collection<Player> getAll() {
+    public HashMap<String, Player> getAll() {
         return players;
     }
 
-    public void removeAll(Collection<Player> players) {
-        this.players.removeAll(players);
-    }
-
     public Player findBy(String name) {
-        for (Player player : players) {
-            if (player.matches(name)) {
-                return player;
-            }
-        }
-        return null;
+        return players.get(name);
     }
 
     public Player findBy(int id) {
-        for (Player player : players) {
+        for (Player player : players.values()) {
             if (player.getId() == id) {
                 return player;
             }
@@ -43,13 +33,14 @@ public class Game {
     }
 
     public void register(Player player) {
-        if (players.contains(player)) {
+        String playerName = player.getName();
+        if (players.containsKey(playerName.toLowerCase())) {
             throw new AlreadyRegisteredException("Player «" + player.getName() + "» is already registered");
         }
         if (this.findBy(player.getId()) != null) {
             throw new AlreadyRegisteredException("Player with ID " + player.getId() + " is already registered");
         }
-        players.add(player);
+        players.put(playerName, player);
     }
 
     public int round(String playerName1, String playerName2) {

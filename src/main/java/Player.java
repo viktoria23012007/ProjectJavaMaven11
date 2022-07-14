@@ -10,10 +10,6 @@ public class Player implements Comparable<Player> {
     private String name;
     private int strength;
 
-    public boolean matches(String name) {
-        return (this.name.equalsIgnoreCase(name));
-    }
-
     @Override
     public int compareTo(Player p) {
         return strength - p.strength;
